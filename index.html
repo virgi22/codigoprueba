@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>CRUD Alumnos</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    
+
+</head>
+<body>
+    <div id="appAlumnos" class="container">
+        <!-- Formulario para añadir Alumnos -->
+        <section class="form col-10" style="margin-top: 20px;">
+            <form action="" class="text-center col-12 row">
+                <input v-model="nombre" @keyup.enter="crearalumno" type="text" class="form-control col-5" placeholder="Nombre" style="margin-left: 5px;">
+                <input v-model="edad" @keyup.enter="crearalumno" type="number" name="edad" placeholder="Edad" class="col-5 form-control" style="margin-left: 5px;">
+                
+                <!-- Botón para añadir -->
+  
+                  <button @click="crearalumno" type="button" value="Añadir" class="btn btn-success col-1" style="margin-left: 5px;"><i class="fa-solid fa-plus" style="color: #ffffff;"></i></button>
+        
+                
+
+            </form>
+        </section>
+        <!-- Tabla donde se muestran los datos -->
+        <section class="data col-10" style="margin-top: 30px;">
+            <caption>Alumnos</caption>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">id</th>
+                        <th scope="col">Nombre</th>
+                        <th scope="col">Edad</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="(alumno, index) in Alumnos">
+                        <td>{{ alumno.id }}</td>
+                        <td>
+                            <span v-if="formActualizar && idActualizar == index">
+                                <!-- Formulario para actualizar -->
+                                <input v-model="nombreActualizar" type="text" class="form-control">
+                            </span>
+                            <span v-else>
+                                <!-- Dato nombre -->
+                                {{ alumno.nombre }}
+                            </span>
+                        </td>
+                        <td>
+                            <span v-if="formActualizar && idActualizar == index">
+                                <!-- Formulario para actualizar -->
+                                <input v-model="edadActualizar" type="text" class="form-control">
+                            </span>
+                            <span v-else>
+                                <!-- Dato edad -->
+                                {{ alumno.edad }}
+                            </span>
+                        </td>
+                        <td>
+                            <!-- Botón para guardar la información actualizada -->
+                            <span v-if="formActualizar && idActualizar == index">
+                                <button @click="guardarActualizacion(index)" class="btn btn-success"><i class="fa fa-floppy-disk" style="color: #ffffff;"></i></button>
+                            </span>
+                            <span v-else>
+                                <!-- Botón para mostrar el formulario de actualizar -->
+                                <button @click="verFormActualizar(index)" class="btn btn-warning"><i class="fa fa-user-pen" style="color: #ffffff;"></i></button>
+                                <!-- Botón para borrar -->
+                                <button @click="borraralumno(index)" class="btn btn-danger"><i class="fa fa-user-xmark" style="color: #ffffff;"></i></button>
+                            </span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            new Vue({
+                el: '#appAlumnos',
+                data: {
+                    // Input nombre
+                    nombre: '',
+                    // Input edad
+                    edad: '',
+                    // Ver o no ver el formulario de actualizar
+                    formActualizar: false,
+                    // La posición de tu lista donde te gustaría actualizar 
+                    idActualizar: -1,
+                    // Input nombre dentro del formulario de actualizar
+                    nombreActualizar: '',
+                    // Input edad dentro del formulario de actualizar
+                    edadActualizar: '',
+                    // Lista de Alumnos
+                    Alumnos: [] 
+                },
+                methods: {
+                    crearalumno: function () {
+                       // Genera un ID aleatorio de hasta 3 dígitos
+    const randomId = Math.floor(Math.random() * 1000); // Genera un número aleatorio entre 0 y 999
+
+// Añade el alumno con el ID aleatorio
+this.Alumnos.push({
+    id: randomId,
+    nombre: this.nombre,
+    edad: this.edad
+});
+
+// Vacía el formulario de añadir
+this.nombre = '';
+this.edad = '';
+                    },
+                    verFormActualizar: function (alumno_id) {
+                        // Antes de mostrar el formulario de actualizar, rellenamos sus campos
+                        this.idActualizar = alumno_id;
+                        this.nombreActualizar = this.Alumnos[alumno_id].nombre;
+                        this.edadActualizar = this.Alumnos[alumno_id].edad;
+                        // Mostramos el formulario
+                        this.formActualizar = true;
+                    },
+                    borraralumno: function (alumno_id) {
+                        // Borramos de la lista
+                        this.Alumnos.splice(alumno_id, 1);
+                    },
+                    guardarActualizacion: function (alumno_id) {
+                        // Ocultamos nuestro formulario de actualizar
+                        this.formActualizar = false;
+                        // Actualizamos los datos
+                        this.Alumnos[alumno_id].nombre = this.nombreActualizar;
+                        this.Alumnos[alumno_id].edad = this.edadActualizar;
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
